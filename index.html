@@ -16,6 +16,30 @@ body {
     overflow: hidden;
 }
 
+#startScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    color: white;
+    text-align: center;
+}
+
+#startBtn {
+    background: white;
+    color: #e63946;
+    border: none;
+    padding: 18px 40px;
+    font-size: 20px;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
 .card {
     background: white;
     padding: 35px;
@@ -23,16 +47,6 @@ body {
     text-align: center;
     box-shadow: 0 15px 40px rgba(0,0,0,0.25);
     max-width: 420px;
-    z-index: 2;
-}
-
-h1 {
-    color: #e63946;
-}
-
-p {
-    color: #333;
-    font-size: 18px;
 }
 
 .heart {
@@ -46,161 +60,68 @@ p {
     100% { transform: scale(1); }
 }
 
-.buttons {
-    margin-top: 20px;
-}
-
 button {
     padding: 12px 28px;
     border-radius: 30px;
     border: none;
     font-size: 16px;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.yes {
-    background: #e63946;
-    color: white;
-}
-
-.no {
-    background: #bbb;
-}
-
-.countdown {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #e63946;
-}
-
-/* Floating hearts */
-.heart-float {
-    position: absolute;
-    bottom: -20px;
-    font-size: 20px;
-    animation: float 6s linear infinite;
-    opacity: 0.7;
-}
-
-@keyframes float {
-    0% { transform: translateY(0); opacity: 0.8; }
-    100% { transform: translateY(-100vh); opacity: 0; }
-}
-
-/* Tap-to-start overlay */
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 22px;
-    text-align: center;
-    z-index: 10;
-    cursor: pointer;
-}
+.yes { background: #e63946; color: white; }
+.no { background: #bbb; }
 </style>
 </head>
 
 <body>
 
-<!-- 🎶 Elaine – You're The One -->
-<audio id="music" loop>
+<!-- 🎶 MUSIC -->
+<audio id="music" loop playsinline>
     <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Various_Artists/Pop/Elaine_-_Youre_The_One.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Tap overlay -->
-<div id="overlay">
-    💕 Tap anywhere to open <br><br>
-    🎶 Elaine – You’re The One
+<!-- START SCREEN -->
+<div id="startScreen">
+    <h2>💖 I have something special for you 💖</h2>
+    <p>Elaine – You’re The One 🎶</p>
+    <button id="startBtn">OPEN 💕</button>
 </div>
 
+<!-- MAIN CARD -->
 <div class="card">
     <div class="heart">❤️</div>
-
-    <h1>Hey <span id="name">My Love</span> 💕</h1>
-
+    <h1>Hey My Love 💕</h1>
     <p>
-        Every moment with you feels like magic.  
-        You make my heart feel safe and loved.  
-        <br><br>
+        You make my heart feel safe and happy.<br><br>
         Will you be <strong>my Valentine?</strong> 💘
     </p>
 
-    <div class="buttons">
-        <button class="yes" onclick="yesClicked()">YES 💖</button>
-        <button class="no" id="noBtn">NO 🙃</button>
-    </div>
-
-    <div class="countdown" id="countdown"></div>
+    <button class="yes" onclick="alert('YAY 💖💖')">YES 💖</button>
+    <button class="no" id="noBtn">NO 🙃</button>
 </div>
 
 <script>
-// PERSONALIZE NAME
-document.getElementById("name").innerText = "KHOLO"; 
-// TAP TO START MUSIC
-const overlay = document.getElementById("overlay");
 const music = document.getElementById("music");
+const startBtn = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
 
-overlay.addEventListener("click", () => {
-    music.play();
-    overlay.style.display = "none";
+// USER GESTURE → MUSIC PLAYS
+startBtn.addEventListener("click", async () => {
+    try {
+        await music.play();
+        startScreen.style.display = "none";
+    } catch (e) {
+        alert("Tap again to start the music 💕");
+    }
 });
 
-// YES CLICK
-function yesClicked() {
-    alert("YAY 💖💖 I love you so much!");
-    startFireworks();
-}
-
-// NO BUTTON RUNS AWAY
+// NO BUTTON RUNS
 const noBtn = document.getElementById("noBtn");
 noBtn.addEventListener("mouseover", () => {
     noBtn.style.position = "absolute";
     noBtn.style.left = Math.random() * 80 + "vw";
     noBtn.style.top = Math.random() * 80 + "vh";
 });
-
-// COUNTDOWN
-const valentinesDay = new Date("Feb 14, 2026 00:00:00").getTime();
-const countdownEl = document.getElementById("countdown");
-
-setInterval(() => {
-    const now = new Date().getTime();
-    const diff = valentinesDay - now;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    countdownEl.innerHTML = days + " days until Valentine’s Day 💕";
-}, 1000);
-
-// FLOATING HEARTS
-setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart-float";
-    heart.innerHTML = "❤️";
-    heart.style.left = Math.random() * 100 + "vw";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 6000);
-}, 400);
-
-// FIREWORKS
-function startFireworks() {
-    for (let i = 0; i < 40; i++) {
-        const spark = document.createElement("div");
-        spark.innerHTML = "✨";
-        spark.style.position = "absolute";
-        spark.style.left = Math.random() * 100 + "vw";
-        spark.style.top = Math.random() * 100 + "vh";
-        spark.style.fontSize = "20px";
-        document.body.appendChild(spark);
-        setTimeout(() => spark.remove(), 1500);
-    }
-}
 </script>
 
 </body>
